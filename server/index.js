@@ -12,8 +12,11 @@ app.use(express.json());
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('Mongo connected'))
-  .catch(err => console.error('Mongo connection error:', err));
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => {
+    console.error('❌ MongoDB connection error:', err);
+    process.exit(1);
+  });
 
 // Routes
 const entriesRoutes = require('./routes/entries');
@@ -24,13 +27,13 @@ if (process.env.NODE_ENV === 'production') {
   const clientDistPath = path.join(__dirname, '../client/dist');
   app.use(express.static(clientDistPath));
 
-  // ✅ Use this instead of app.get('*', ...)
+  // ✅ Use wildcard that works in Express 5
   app.get('/*', (req, res) => {
     res.sendFile(path.join(clientDistPath, 'index.html'));
   });
 }
 
-// 404 handler (for API only)
+// 404 handler (for API routes only)
 app.use((req, res, next) => {
   if (req.originalUrl.startsWith('/api/')) {
     return res.status(404).json({ error: 'Not found' });
@@ -40,11 +43,11 @@ app.use((req, res, next) => {
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('💥 Server error:', err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Daily Power Journal API running on port ${PORT}`);
+  console.log(`🚀 Daily Power Journal API running on port ${PORT}`);
 });

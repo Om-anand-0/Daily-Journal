@@ -1,9 +1,8 @@
-// models/JournalEntry.js
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const JournalEntrySchema = new Schema({
-  date: { type: Date, required: true }, // the journal date
+  date: { type: Date, required: true },
   top3Goals: {
     type: [String],
     required: true,
@@ -25,21 +24,16 @@ const JournalEntrySchema = new Schema({
     default: []
   },
   intention: { type: String, default: '' },
-
-  // Midday optional object
   midday: {
     progress: { type: String, default: '' },
     biggestDistraction: { type: String, default: '' }
   },
-
-  // Evening reflection
   evening: {
     wins: { type: String, default: '' },
     improvements: { type: String, default: '' },
-    learnings: { type: [String], default: [] }, // 1-3 bullets
+    learnings: { type: [String], default: [] },
     gratitude: { type: String, default: '' }
   },
-
   stuckToPlan: {
     type: String,
     enum: ['Yes, full focus', 'Mostly, small distractions', "No, but I’ll bounce back"],

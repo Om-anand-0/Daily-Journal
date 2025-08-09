@@ -6,7 +6,7 @@ const JournalEntry = require('../models/JournalEntry');
 // POST /api/entries/import
 router.post('/import', async (req, res) => {
   try {
-    const items = req.body.entries; // expect { entries: [ ... ] }
+    const items = req.body.entries;
     if (!Array.isArray(items)) {
       return res.status(400).json({ error: 'entries must be an array' });
     }
@@ -16,7 +16,7 @@ router.post('/import', async (req, res) => {
       insertedIds: inserted.map(i => i._id)
     });
   } catch (err) {
-    console.error(err);
+    console.error('Import error:', err);
     res.status(500).json({ error: 'Import failed' });
   }
 });
