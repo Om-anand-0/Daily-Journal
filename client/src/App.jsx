@@ -6,7 +6,7 @@ import InstallPrompt from './components/InstallPrompt';
 import './index.css';
 
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'https://daily-journal-2yyp.onrender.com/api';
 
 function App() {
   const [entries, setEntries] = useState([]);
