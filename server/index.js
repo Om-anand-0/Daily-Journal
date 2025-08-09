@@ -1,4 +1,3 @@
-// index.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -9,7 +8,7 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json()); // Built-in body parser
+app.use(express.json());
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
@@ -25,14 +24,18 @@ if (process.env.NODE_ENV === 'production') {
   const clientDistPath = path.join(__dirname, '../client/dist');
   app.use(express.static(clientDistPath));
 
-  app.get('*', (req, res) => {
+  // ✅ Use this instead of app.get('*', ...)
+  app.get('/*', (req, res) => {
     res.sendFile(path.join(clientDistPath, 'index.html'));
   });
 }
 
 // 404 handler (for API only)
-app.use((req, res) => {
-  res.status(404).json({ error: 'Not found' });
+app.use((req, res, next) => {
+  if (req.originalUrl.startsWith('/api/')) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+  next();
 });
 
 // Global error handler
