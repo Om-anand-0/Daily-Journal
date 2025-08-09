@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -19,7 +20,17 @@ mongoose.connect(process.env.MONGO_URI)
 const entriesRoutes = require('./routes/entries');
 app.use('/api/entries', entriesRoutes);
 
-// 404 handler
+// Serve frontend in production
+if (process.env.NODE_ENV === 'production') {
+  const clientDistPath = path.join(__dirname, '../client/dist');
+  app.use(express.static(clientDistPath));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+}
+
+// 404 handler (for API only)
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
