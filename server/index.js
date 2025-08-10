@@ -35,16 +35,7 @@ const authRoutes = require('./routes/auth');
 app.use('/api/entries', entriesRoutes);
 app.use('/api/auth', authRoutes);
 
-// Serve frontend in production
-if (process.env.NODE_ENV === 'production') {
-  const clientDistPath = path.join(__dirname, '../client/dist');
-  app.use(express.static(clientDistPath));
-
-  // ✅ Use wildcard that works in Express 5
-  app.get('/*', (req, res) => {
-    res.sendFile(path.join(clientDistPath, 'index.html'));
-  });
-}
+// API-only backend - frontend is deployed separately
 
 // 404 handler (for API routes only)
 app.use((req, res, next) => {
