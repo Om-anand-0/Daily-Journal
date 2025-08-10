@@ -9,6 +9,7 @@ const app = express();
 // Middleware
 app.use(cors({
   origin: [
+    'http://localhost:5173',
     'http://localhost:5174',
     'http://localhost:3000',
     'https://daily-power-journal.windsurf.build'
@@ -27,7 +28,10 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Routes
 const entriesRoutes = require('./routes/entries');
+const authRoutes = require('./routes/auth');
+
 app.use('/api/entries', entriesRoutes);
+app.use('/api/auth', authRoutes);
 
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {

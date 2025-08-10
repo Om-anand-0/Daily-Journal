@@ -1,7 +1,12 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const JournalEntrySchema = new Schema({
+const journalEntrySchema = new Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   date: { type: Date, required: true },
   top3Goals: {
     type: [String],
@@ -41,4 +46,4 @@ const JournalEntrySchema = new Schema({
   }
 }, { timestamps: true });
 
-module.exports = mongoose.model('JournalEntry', JournalEntrySchema);
+module.exports = mongoose.model('JournalEntry', journalEntrySchema);

@@ -2,15 +2,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 const JournalEntry = require('../models/JournalEntry');
+const auth = require('../middleware/auth');
 
 // POST /api/entries/import
-router.post('/import', async (req, res) => {
+router.post('/import', auth, async (req, res) => {
   try {
     const items = req.body.entries;
     if (!Array.isArray(items)) {
       return res.status(400).json({ error: 'entries must be an array' });
     }
-    const inserted = await JournalEntry.insertMany(items);
+    // Add user ID to all entries
+    const entriesWithUser = items.map(item => ({ ...item, user: req.user._id }));
+    const inserted = await JournalEntry.insertMany(entriesWithUser);
     res.json({
       insertedCount: inserted.length,
       insertedIds: inserted.map(i => i._id)
@@ -22,31 +25,31 @@ router.post('/import', async (req, res) => {
 });
 
 // GET /api/entries/export
-router.get('/export', async (req, res) => {
-  const all = await JournalEntry.find().sort({ date: -1 }).lean();
+router.get('/export', auth, async (req, res) => {
+  const all = await JournalEntry.find({ user: req.user._id }).sort({ date: -1 }).lean();
   res.json(all);
 });
 
 // GET /api/entries
-router.get('/', async (req, res) => {
-  const list = await JournalEntry.find().sort({ date: -1 }).limit(100).lean();
+router.get('/', auth, async (req, res) => {
+  const list = await JournalEntry.find({ user: req.user._id }).sort({ date: -1 }).limit(100).lean();
   res.json(list);
 });
 
 // GET /api/entries/:id
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.id)) {
     return res.status(400).json({ error: 'Invalid ID' });
   }
-  const item = await JournalEntry.findById(req.params.id).lean();
+  const item = await JournalEntry.findOne({ _id: req.params.id, user: req.user._id }).lean();
   if (!item) return res.status(404).json({ error: 'Not found' });
   res.json(item);
 });
 
 // POST /api/entries
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
-    const entry = new JournalEntry(req.body);
+    const entry = new JournalEntry({ ...req.body, user: req.user._id });
     const saved = await entry.save();
     res.status(201).json(saved);
   } catch (err) {
@@ -55,13 +58,13 @@ router.post('/', async (req, res) => {
 });
 
 // PUT /api/entries/:id
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.id)) {
     return res.status(400).json({ error: 'Invalid ID' });
   }
   try {
-    const updated = await JournalEntry.findByIdAndUpdate(
-      req.params.id,
+    const updated = await JournalEntry.findOneAndUpdate(
+      { _id: req.params.id, user: req.user._id },
       req.body,
       { new: true, runValidators: true }
     );
@@ -73,11 +76,11 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE /api/entries/:id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.id)) {
     return res.status(400).json({ error: 'Invalid ID' });
   }
-  const deleted = await JournalEntry.findByIdAndDelete(req.params.id);
+  const deleted = await JournalEntry.findOneAndDelete({ _id: req.params.id, user: req.user._id });
   if (!deleted) return res.status(404).json({ error: 'Not found' });
   res.json({ success: true });
 });
