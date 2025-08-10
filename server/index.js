@@ -13,6 +13,7 @@ app.use(cors({
     'http://localhost:5174',
     'http://localhost:3000',
     'https://daily-power-journal.windsurf.build',
+    'https://daily-journal-2yyp.onrender.com',
     'https://daily-power-journal-redesigned.windsurf.build'
   ],
   credentials: true
