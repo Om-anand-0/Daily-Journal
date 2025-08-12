@@ -16,7 +16,7 @@ A modern, Progressive Web App (PWA) for tracking daily goals, progress, and lear
 
 ## 🚀 Live Demo
 
-**Frontend**: [https://daily-power-journal.windsurf.build](https://daily-power-journal.windsurf.build)
+**Frontend**: [https://daily-power-journal.windsurf.build](https://daily-power-journal-redesigned.windsurf.build)
 
 ## 🛠️ Tech Stack
 
@@ -96,8 +96,7 @@ npm run dev
 
 ### 4. Access the App
 - **Development**: http://localhost:5174
-- **Production**: https://daily-power-journal.windsurf.build
-
+- **Production**: https://daily-power-journal-redesigned.windsurf.build
 ## 📱 PWA Installation
 
 ### On Mobile (Android/iOS)
